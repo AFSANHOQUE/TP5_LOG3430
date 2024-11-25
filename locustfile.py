@@ -8,7 +8,6 @@ class SimpleTasks(TaskSet):
 
     @task(2)
     def fast(self):
-        # Test the fast route
         self.client.get("/fast")
 
     @task(3)
