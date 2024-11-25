@@ -20,10 +20,13 @@ jobs:
           pip install -r requirements.txt  # Install project dependencies from requirements.txt
       - name: Start Flask server
         run: |
-          python server.py 3000 & 
+          nohup python server.py 3000 &  # Start the Flask server in the background
           echo "Waiting for Flask server to start"
-          sleep 30
-
+            
+          until curl --silent --head --fail http://localhost:3000; do
+          echo "Waiting for Flask server to be ready..."
+          sleep 5
+          done
       - name: Run Locust load test
         run: |
           locust -f locustfile.py --headless --users=10000 --spawn-rate=100 -t 2m --host=http://localhost:4000
