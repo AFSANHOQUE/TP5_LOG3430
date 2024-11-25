@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - main
-
 jobs:
   locust-test:
     runs-on: ubuntu-latest
@@ -11,27 +10,19 @@ jobs:
     steps:
       - name: Check out the repository
         uses: actions/checkout@v2
-
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: '3.10'
-
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip  # Upgrade pip to the latest version
           pip install -r requirements.txt  # Install project dependencies from requirements.txt
-
       - name: Start Flask server
         run: |
-          python server.py 4000 &  # Start the Flask server in the background
+          python server.py 4000 & 
           echo "Waiting for Flask server to start"
-          # Wait until the Flask server is up and accepting connections (retry a few times)
-          until curl --silent --head --fail http://localhost:4000; do
-            echo "Waiting for Flask server to be ready..."
-            sleep 5  # Retry every 5 seconds
-          done
-
+          sleep 30
       - name: Run Locust load test
         run: |
           locust -f locustfile.py --headless --users=10000 --spawn-rate=100 -t 2m --host=http://localhost:4000
